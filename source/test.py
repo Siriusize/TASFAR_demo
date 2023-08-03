@@ -99,7 +99,7 @@ if __name__ == '__main__':
     data_path = '../data/%s.json' % user_name
     pseudo_label_path = '../data/%s_pseudo_label.json' % user_name
     train_rte_origin, test_rte_origin, origin_traj, label_traj = test(model_path, data_path, pseudo_label_path, args.device)
-    model_path = '../model/trained_user1.pt'
+    model_path = '../model/%s_model.pt' % user_name
     data_path = '../data/%s.json' % user_name
     pseudo_label_path = '../data/%s_pseudo_label.json' % user_name
     train_rte_tasfar, test_rte_tasfar, tasfar_traj, label_traj = test(model_path, data_path, pseudo_label_path, args.device)

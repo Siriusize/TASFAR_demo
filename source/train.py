@@ -17,6 +17,7 @@ def weighted_mse(pred, label, lmd, gmd, var, thre):
 def train(save_path, model_path, data_path, pseodo_label_path, device):
     if not os.path.exists(save_path):
         os.mkdir(save_path)
+    user_name = save_path.split('_')[-1]
 
     # Hyperparameters
     learning_rate = 1e-6
@@ -59,8 +60,9 @@ def train(save_path, model_path, data_path, pseodo_label_path, device):
 
     # Save model
     print('Training finished.')
-    torch.save({'model_state_dict': network.state_dict()}, os.path.join(save_path, 'finished.pt'))
-    print('The model has been saved to %s' % os.path.join(save_path, 'finished.pt'))
+    model_saved_path = os.path.join(save_path, '%s_training.pt' % user_name)
+    torch.save({'model_state_dict': network.state_dict()}, model_saved_path)
+    print('The model has been saved to \'%s\'' % model_saved_path)
     print('-' * 60)
 
 
@@ -97,4 +99,4 @@ if __name__ == '__main__':
     train(save_path, model_path, data_path, pseodo_label_path, args.device)
 
     fig_path = '../figure/%s' % user_name
-    test_model(user_name, os.path.join(save_path, 'finished.pt'), args.device)
+    test_model(user_name, os.path.join(save_path, '%s_training.pt' % user_name), args.device)
