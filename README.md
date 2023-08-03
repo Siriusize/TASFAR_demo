@@ -48,16 +48,15 @@ python ./test.py -u user1 -d cpu
 Running results
 - User 1
 
-<img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png" alt="user1" width="200"/>
-![user1](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png =200x)
+<img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png" alt="user1" width="500"/>
 
 - User 2
 
-![user2](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user2.png)
+<img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user2.png" alt="user2" width="500"/>
 
 -User 3
 
-![user3](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user3.png)
+<img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user3.png" alt="user3" width="500"/>
 
 ### Training 
 ```
