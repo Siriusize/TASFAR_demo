@@ -21,7 +21,6 @@ matplotlib==3.5.2
 numpy==1.21.6
 ortools==9.0.9048
 pandas==1.3.5
-patsy==0.5.3
 Pillow==9.0.1
 pyparsing==3.0.9
 torch==1.11.0
