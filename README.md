@@ -48,7 +48,7 @@ python ./test.py -u user1 -d cpu
 Running results
 - User 1
 
-![user1](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png=200x)
+![user1](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png =200x)
 
 - User 2
 
