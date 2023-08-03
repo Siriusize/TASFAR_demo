@@ -38,7 +38,7 @@ python ./gen_pseudo_label.py -u user1 -d cpu
 Sample result for user 1
 ```
 ----------------------------------------------------------------
-Pseudo-label information of user1:
+Information of user1:
 Trajectory length: 486.07m
 Time period: 456s
 Number of steps (2s): 228
