@@ -55,7 +55,7 @@ cd ./source/
 # Generating pseudo label for user1, 
 python ./test.py -u user1 -d cpu  
 ```
-Running results
+Results
 - User 1
 
 <img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png" alt="user1" width="400"/>
