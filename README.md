@@ -49,7 +49,7 @@ STE reduction rate: 10.89%
 ```
 
 ### Testing 
-In this part, we demo test results using provided adapted model (in ./model/user1_model.pt).
+In this part, we demo test results using provided adapted model (from ./model/user1_model.pt).
 ```
 cd ./source/
 # Generating pseudo label for user1, 
