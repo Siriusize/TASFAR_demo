@@ -35,8 +35,19 @@ cd ./source/
 # -d refers to computing device
 python ./gen_pseudo_label.py -u user1 -d cpu  
 ```
-Sample result
-
+Sample result for user 1
+```
+----------------------------------------------------------------
+Pseudo-label information of user1:
+Trajectory length: 486.07m
+Time period: 456s
+Number of steps (2s): 228
+Uncertain data ratio: 12.28%
+Average step error (STE) before adaptation: 0.620m
+Average step error (STE) after adaptation: 0.553m
+STE reduction rate: 10.89%
+----------------------------------------------------------------
+```
 
 ### Testing 
 In this part, we demo test results using provided adapted model (in ./model/user1_model.pt).
@@ -66,18 +77,7 @@ cd ./source/
 python ./train.py -u user1 -d cpu 
 ```
 Sample results for user 1
-```
-----------------------------------------------------------------
-Pseudo-label information of user1:
-Trajectory length: 486.07m
-Time period: 456s
-Number of steps (2s): 228
-Uncertain data ratio: 12.28%
-Average step error (STE) before adaptation: 0.620m
-Average step error (STE) after adaptation: 0.553m
-STE reduction rate: 10.89%
-----------------------------------------------------------------
-```
+
 And, the module will automatically test on the trained model with statistics with figures shown as above.
 ```
 ------------------------------------------------------------------
