@@ -76,7 +76,7 @@ cd ./source/
 # Generating pseudo label for user1, 
 python ./train.py -u user1 -d cpu 
 ```
-The module will automatically test on the trained model with statistics with figures shown as above.
+The module will automatically test on the trained model with statistics and figures shown as above.
 ```
 ------------------------------------------------------------------
 Relative trajectory error (RTE) of adaptation set (origin): 2.460
