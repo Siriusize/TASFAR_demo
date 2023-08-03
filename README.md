@@ -10,8 +10,23 @@ This demo consists of two parts:
 - Testing on adapted models
 
 # Kick start
+Set up environment
 ```
-abd
+conda create -n tasfar_demo_env python=3.11  # If you are using anaconda 
+conda activate tasfar_demo_env  # Activate the environment
+```
+Dependencies (more details can be found in ./requirements.txt)
+```
+matplotlib==3.5.2
+numpy==1.21.6
+ortools==9.0.9048
+pandas==1.3.5
+patsy==0.5.3
+Pillow==9.0.1
+pyparsing==3.0.9
+torch==1.11.0
+torchaudio==0.11.0
+torchvision==0.12.0
 ```
 
 
