@@ -253,7 +253,7 @@ if __name__ == '__main__':
         json.dump(pseudo_label_dict, fp)
     traj_l, step_count, changed_data_r, ste_before, ste_after = test_pseudo_label_dict(pseudo_label_dict, data_path)
     print('-' * 60)
-    print('Pseudo-label information of %s:' % user_name)
+    print('Information of %s:' % user_name)
     print('Trajectory length: %.2fm' % traj_l)
     print('Time period: %ss' % (step_count*2))
     print('Number of steps (2s): %s' % step_count)
