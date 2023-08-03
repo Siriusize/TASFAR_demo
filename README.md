@@ -10,7 +10,7 @@ This demo consists of two parts:
 - Testing on adapted models
 
 ## Kick start
-Set up environment
+### Environment setup
 ```
 conda create -n tasfar_demo_env python=3.11  # If you are using anaconda 
 conda activate tasfar_demo_env  # Activate the environment
@@ -28,7 +28,37 @@ torch==1.11.0
 torchaudio==0.11.0
 torchvision==0.12.0
 ```
+### Pseudo-label testing
+```
+cd ./source/
+# Generating pseudo label for user1, we show [user1, user2, user3] considering github storage
+# -d refers to computing device
+python ./gen_pseudo_label.py -u user1 -d cpu  
+```
+Sample result
 
+
+### Testing 
+In this part, we demo test results using provided adapted model (in ./model/user1_model.pt).
+```
+cd ./source/
+# Generating pseudo label for user1, 
+python ./test.py -u user1 -d cpu  
+```
+Sample result
+- User 1
+![Alt text](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png)
+- User 2
+![Alt text](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user2.png)
+-User 3
+![Alt text](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user3.png)
+
+### Training 
+```
+cd ./source/
+# Generating pseudo label for user1, we show [user1, user2, user3] considering github storage
+python ./gen_pseudo_label.py -u user1 -d cpu  
+```
 
 
 
