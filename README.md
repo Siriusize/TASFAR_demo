@@ -2,7 +2,7 @@
 ## Introduction 
 In this repo, we demonstrate TASFAR by pedestrian dead reckoning (location sensing), as in one of the experiments from the original paper. In pedestrian dead reckoning, a model utilizes the inertial measurement unit (IMU) signals to estimate the 2D walking trajectory of phone users. This task is very challenging due to the localization error is cumulative.
 
-In the experiment, we use MCNN [1] as baseline model and show TASFAR can further improves its performance on each user.
+In the experiment, we use TCN [1] as baseline model and show TASFAR can further improves its performance on each user.
 
 This demo consists of two parts:
 - Pseudo-label generation of TASFAR
