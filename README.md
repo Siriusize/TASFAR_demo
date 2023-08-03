@@ -1,6 +1,6 @@
 # Demo code for TASFAR
 ## Introduction 
-In this repo, we demonstrate TASFAR by pedestrian dead reckoning (location sensing), as in one of the experiments from the original paper. In pedestrian dead reckoning, a model utilizes the inertial measurement unit (IMU) signals to estimate the 2D walking trajectory of phone users. 
+In this repo, we demonstrate TASFAR by pedestrian dead reckoning (location sensing), as in one of the experiments from the original paper. In pedestrian dead reckoning, a model utilizes the inertial measurement unit (IMU) signals to estimate the 2D walking trajectory of phone users. This task is very challenging due to the localization error is cumulative.
 
 In the experiment, we use MCNN [1] as baseline model and show TASFAR can further improves its performance on each user.
 
@@ -59,12 +59,35 @@ Running results
 <img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user3.png" alt="user3" width="400"/>
 
 ### Training 
+We also provide demo for training. 
 ```
 cd ./source/
-# Generating pseudo label for user1, we show [user1, user2, user3] considering github storage
-python ./gen_pseudo_label.py -u user1 -d cpu  
+# Generating pseudo label for user1, 
+python ./train.py -u user1 -d cpu 
 ```
-
+Sample results for user 1
+```
+----------------------------------------------------------------
+Pseudo-label information of user1:
+Trajectory length: 486.07m
+Time period: 456s
+Number of steps (2s): 228
+Uncertain data ratio: 12.28%
+Average step error (STE) before adaptation: 0.620m
+Average step error (STE) after adaptation: 0.553m
+STE reduction rate: 10.89%
+----------------------------------------------------------------
+```
+And, the module will automatically test on the trained model with statistics with figures shown as above.
+```
+------------------------------------------------------------------
+Relative trajectory error (RTE) of adaptation set (origin): 2.460
+Relative trajectory error (RTE) of adaptation set (TASFAR): 2.080
+Relative trajectory error (RTE) of test set (origin): 2.387
+Relative trajectory error (RTE) of test set (TASFAR): 1.956
+Trajectory visualization has been saved to '../figure/user1'
+------------------------------------------------------------------
+```
 
 
 ## Reference
