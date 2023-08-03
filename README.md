@@ -48,6 +48,7 @@ python ./test.py -u user1 -d cpu
 Running results
 - User 1
 
+<img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png" alt="user1" width="200"/>
 ![user1](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png =200x)
 
 - User 2
