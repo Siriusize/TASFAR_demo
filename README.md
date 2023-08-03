@@ -47,10 +47,15 @@ python ./test.py -u user1 -d cpu
 ```
 Sample result
 - User 1
+
 ![Alt text](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user1.png)
+
 - User 2
+
 ![Alt text](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user2.png)
+
 -User 3
+
 ![Alt text](https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user3.png)
 
 ### Training 
