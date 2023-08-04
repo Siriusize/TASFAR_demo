@@ -64,7 +64,7 @@ Results: although both outputs (before/after adaptation) deviate from the ground
 
 <img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user2.png" alt="user2" width="400"/>
 
--User 3
+- User 3
 
 <img src="https://github.com/Siriusize/TASFAR_demo/blob/main/figure/user3.png" alt="user3" width="400"/>
 
