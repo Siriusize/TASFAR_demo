@@ -86,6 +86,58 @@ Trajectory visualization has been saved to '../figure/user1'
 ------------------------------------------------------------------
 ```
 
+## Two additional tasks
+We also demonstrate TASFAR by two additional tasks. One is to predict the housing price with the California housing dataset, the other one is to predict the taxi-trip duration 
+with the NYC taxi trip duration dataset.
+
+We split the data based on geographical locations. For the California housing dataset, the source data are in the Golden Coast of California while the target data are not.
+For the NYC taxi trip duration dataset, the pick-up locations of source data are in Manhattan while the ones of target data are not. 
+
+The organization of two tasks' folders are the same so we only demonstrate the first task here.
+
+### Pseudo-label testing
+```
+cd ./CA_house/source/
+python gen_pseudo_label.py 
+```
+Sample output:
+```
+------------------------------------------------------------
+Price MSE before adaptation: 0.2421
+Price MSE after adaptation: 0.2055
+MSE reduction rate: 15.11%
+------------------------------------------------------------
+```
+
+### Testing
+```
+cd ./CA_house/source/
+python test.py 
+```
+Sample output:
+```
+------------------------------------------------------------
+Price MSE before adaptation: 0.2421
+Price MSE after adaptation: 0.1734
+MSE reduction rate: 28.36%
+------------------------------------------------------------
+```
+
+### Training
+```
+cd ./CA_house/source/
+# If you want to test the generated pseudo labels in Pseudo-label testing, you can modify the variable 'pseudo_label_path' in main function
+python train.py   
+```
+Sample output:
+```
+------------------------------------------------------------
+Price MSE before adaptation: 0.2421
+Price MSE after adaptation (5000 epochs): 0.1734
+MSE reduction rate (5000 epochs): 28.38%
+The model has been saved to '../model/training\5000.pt'
+------------------------------------------------------------
+```
 
 ## Reference
 [1] Herath S, Yan H, Furukawa Y. Ronin: Robust neural inertial navigation in the wild: Benchmark, evaluations, & new methods[C]//2020 IEEE International Conference on Robotics and Automation (ICRA). IEEE, 2020: 3146-3152.
