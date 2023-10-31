@@ -140,7 +140,8 @@ def gen_pseudo_label(model_path, q_func, block_size, device):
                 'variance': data[2],
                 'lmd': 1/den_map.shape[0],
                 'gmd': 1/den_map.shape[0],
-                'label': data[4]
+                'label': data[4],
+                'prediction': data[0]
             }
         else:
             den_list = cal_block_indices(data[0], data[1], side_info)
@@ -155,24 +156,28 @@ def gen_pseudo_label(model_path, q_func, block_size, device):
                 'variance': data[2],
                 'lmd': lmd,
                 'gmd': 1 / den_map.shape[0],
-                'label': data[4]
+                'label': data[4],
+                'prediction': data[0]
             }
     return pseudo_label_dict
 
 
 def check_pseudo_label(pseudo_label_dict):
-    total_mse = 0
+    total_msle_a = 0
+    total_msle_b = 0
     total_count = 0
     for k in pseudo_label_dict.keys():
         data = pseudo_label_dict[k]
-        total_mse += (np.log(data['pseudo_label']+1) - np.log(data['label']+1)) ** 2
-        total_count += 1
-    mse_b = 0.5119
-    mse_a = np.sqrt(total_mse/total_count)
+        if data['variance'] > THRESHOLD:
+            total_msle_a += (np.log(data['pseudo_label'] + 1) - np.log(data['label'] + 1)) ** 2
+            total_msle_b += (np.log(data['prediction'] + 1) - np.log(data['label'] + 1)) ** 2
+            total_count += 1
+    rmsle_b = np.sqrt(total_msle_b/total_count)
+    rmsle_a = np.sqrt(total_msle_a/total_count)
     print('-' * 60)
-    print('Duration RMSLE before adaptation: %.4f' % mse_b)
-    print('Duration RMSLE after adaptation: %.4f' % mse_a)
-    print('RMSLE reduction rate: %.2f%%' % ((mse_b-mse_a)/mse_b*100))
+    print('Pseudo-label RMSLE before adaptation: %.4f' % rmsle_b)
+    print('Pseudo-label RMSLE after adaptation: %.4f' % rmsle_a)
+    print('Pseudo-label RMSLE reduction rate: %.2f%%' % ((rmsle_b-rmsle_a)/rmsle_b*100))
     print('-' * 60)
 
 

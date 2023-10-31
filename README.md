@@ -119,7 +119,9 @@ python gen_pseudo_label.py
 Output:
 ```
 ------------------------------------------------------------
-Pseudo-label error (MSE): 0.2055
+Pseudo-label MSE before adaptation: 0.7711
+Pseudo-label MSE after adaptation: 0.4311
+Pseudo-label MSE reduction rate: 44.09%
 ------------------------------------------------------------
 ```
 

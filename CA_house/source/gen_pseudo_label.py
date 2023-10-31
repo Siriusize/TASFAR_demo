@@ -124,7 +124,8 @@ def gen_pseudo_label(model_path, q_func, block_size, device):
                 'variance': data[2],
                 'lmd': 1/den_map.shape[0],
                 'gmd': 1/den_map.shape[0],
-                'label': data[4]
+                'label': data[4],
+                'prediction': data[0]
             }
         else:
             den_list = cal_block_indices(data[0], data[1], side_info)
@@ -139,24 +140,28 @@ def gen_pseudo_label(model_path, q_func, block_size, device):
                 'variance': data[2],
                 'lmd': lmd,
                 'gmd': 1 / den_map.shape[0],
-                'label': data[4]
+                'label': data[4],
+                'prediction': data[0]
             }
     return pseudo_label_dict
 
 
 def check_pseudo_label(pseudo_label_dict):
-    total_mse = 0
+    total_mse_a = 0
+    total_mse_b = 0
     total_count = 0
     for k in pseudo_label_dict.keys():
         data = pseudo_label_dict[k]
-        total_mse += (data['pseudo_label'] - data['label']) ** 2
-        total_count += 1
-    mse_b = 0.2421
-    mse_a = total_mse/total_count
+        if data['variance'] > THRESHOLD:
+            total_mse_a += (data['pseudo_label'] - data['label']) ** 2
+            total_mse_b += (data['prediction'] - data['label']) ** 2
+            total_count += 1
+    mse_b = total_mse_b/total_count
+    mse_a = total_mse_a/total_count
     print('-' * 60)
-    print('Price MSE before adaptation: %.4f' % mse_b)
-    print('Price MSE after adaptation: %.4f' % mse_a)
-    print('MSE reduction rate: %.2f%%' % ((mse_b-mse_a)/mse_b*100))
+    print('Pseudo-label MSE before adaptation: %.4f' % mse_b)
+    print('Pseudo-label MSE after adaptation: %.4f' % mse_a)
+    print('Pseudo-label MSE reduction rate: %.2f%%' % ((mse_b-mse_a)/mse_b*100))
     print('-' * 60)
 
 
