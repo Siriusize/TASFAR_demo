@@ -1,18 +1,41 @@
-from const import QFUNC, THRESHOLD
+import pickle
 import json
 import numpy as np
+from scipy.stats import norm
+from dataset import NYCTaxiDataset
+from torch.utils.data import DataLoader
+import torch
+from network import ANN
+import math
+
+
+# Given parameters
+THRESHOLD = 12102.397583007812
+Q_FUNC = (1.08138730e+02, 4.66947225e-02)
+BLOCK_SIZE = 100
+
+
+def cal_var_lst(lst):
+    """
+    Args:
+        lst: a list of prediction
+    Returns:
+        variance of lst
+    """
+    lst = torch.concat(lst, dim=1).detach().cpu().numpy()  # (1024, 20)
+    return np.var(lst, axis=1)
 
 
 def cal_cdf(x, mean, std):
     return norm.cdf((x-mean)/std)
 
 
-def cal_den(mean, std, side_info):
+def cal_block_indices(mean, std, side_info):
     """
     Args:
         mean: mean of the prediction
         std: std of the predicton
-        side_info: a tuple giving the information of x/y-dimension, (min, max, number_of_block+1, block_size)
+        side_info: a tuple giving the information of density map, (min, max, number_of_block+1, block_size)
     Returns:
         a list of (slot, density)
     """
@@ -43,32 +66,54 @@ def cal_den(mean, std, side_info):
     return den_list
 
 
-def gen_den_map(block_size):
+def gen_pseudo_label(model_path, q_func, block_size, device):
     """
-    Generate density map
     Args:
-        block_size: side length of the block in the density map
+        model_path: path of pretrained model
+        q_func: q function
+        block_size: block size of density map
+        device: device
     Returns:
-        den_map: density map
-        est_map: estimation map, i.e., the corresponding value in each block
-        minimum: minimum value of the density map
-        num: number of block in the density map
+        pseudo_label_dict: a dictionary containing the pseudo label
     """
 
-    with open('../data/test_var_std.json', 'r') as fp:
-        json_data = json.load(fp)
-    mean_std_list = []
-    conf_count = 0
-    for data in list(json_data.values()):
-        # Check how many data are confident data
-        if data[0] < THRESHOLD:
-            mean_std_list.append([data[1], data[0]*QFUNC[1]+QFUNC[0]])
-            conf_count += 1
-    print('%s pieces of data (%.2f%%) are confident' % (conf_count, conf_count/len(json_data.values())))
+    # Load dataset
+    scaler = pickle.load(open('../data/scaler.pkl', 'rb'))
+    test_dataset = NYCTaxiDataset(data_path='../data/nyc_test.csv', scaler=scaler)
+    test_dataloader = DataLoader(test_dataset, batch_size=1024, shuffle=False)
+    intercept, slope = q_func
 
-    mean_std_list = np.array(mean_std_list)
-    min_data = mean_std_list[:, 0] - 3 * mean_std_list[:, 1]
-    max_data = mean_std_list[:, 0] + 3 * mean_std_list[:, 1]
+    # Load network
+    device = torch.device(device)
+    net = ANN(input_size=56, output_size=1, hidden_sizes=[128, 128, 64], dropout=0.2)
+    net.load_state_dict(torch.load(model_path, map_location=device))
+    net.to(device)
+
+    # Collect prediction data
+    pred_data = []
+    for i, data in enumerate(test_dataloader):
+        x, label, data_index = data
+        x = x.to(device)
+        # calculating variance
+        pred_list = []
+        net.train()
+        for j in range(20):
+            pred = net(x)
+            pred_list.append(pred)
+        var = cal_var_lst(pred_list)
+
+        # collecting prediction
+        net.eval()
+        prediction = np.squeeze(net(x).detach().cpu().numpy())
+        label = np.squeeze(label)
+
+        for k in range(data_index.shape[0]):
+            pred_data.append([prediction[k].item(), slope*var[k].item()+intercept, var[k].item(), k, label[k].item()])
+
+    # Generate density map
+    pred_data = np.array(pred_data)
+    min_data = pred_data[:, 0] - 3 * pred_data[:, 1]
+    max_data = pred_data[:, 0] + 3 * pred_data[:, 1]
     minimum = np.min(min_data)
     maximum = np.max(max_data)
     num_block = math.ceil((maximum - minimum) / block_size)
@@ -76,117 +121,66 @@ def gen_den_map(block_size):
 
     # Generate density map
     den_map = np.zeros(num_block)
-    start_t = time.time()
-    for i, data in enumerate(mean_std_list):
-        den_list = cal_den(data[0], data[1], side_info)
-        for d in den_list:
-            den_map[d[0]] += d[1]
-        if i % 1000 == 0:
-            print(i, time.time() - start_t)
+    for data in pred_data:
+        if data[2] < THRESHOLD:
+            den_list = cal_block_indices(data[0], data[1], side_info)
+            for d in den_list:
+                den_map[d[0]] += d[1]
     den_map /= np.sum(den_map)
-    return den_map, (np.linspace(*side_info[:3]) * 2 + block_size) / 2, side_info
 
+    # Generate estimation map
+    est_map = (np.linspace(*side_info[:3]) * 2 + block_size) / 2
 
-def check_pseudo_label(den_map, est_map, side_info):
-    total_msle = 0
-    total_count = 0
-
-    with open('../data/test_var_std.json', 'r') as fp:
-        json_data = json.load(fp)
-    mean_std_list = []
-    for data in list(json_data.values()):
-        if data[0] < THRESHOLD:
-            total_msle += (np.log(data[1]+1) - np.log(data[2]+1)) ** 2
-            total_count += 1
-        else:
-            mean_std_list.append([data[1], data[0]*QFUNC[1]+QFUNC[0], data[2]])
-
-    # Generate pseudo label
-    count = [0, 0, 0]
-    for mean_std in mean_std_list:
-        den_list = cal_den(mean_std[0], mean_std[1], side_info)
-        pseudo_list = []  # To be used for interpolation
-        for d in den_list:
-            pseudo_list.append((est_map[d[0]], den_map[d[0]] * d[1], den_map[d[0]]))
-        if pseudo_list:
-            pseudo_array = np.array(pseudo_list)
-            if np.sum(pseudo_array[:, 1]) == 0:
-                pseudo_label = mean_std[0]
-            else:
-                pseudo_label = np.average(pseudo_array[:, 0], weights=pseudo_array[:, 1]).item()
-        else:
-            pseudo_label = mean_std[0]
-        if abs(pseudo_label - mean_std[2]) < abs(mean_std[0] - mean_std[2]):
-            count[0] += 1
-        elif abs(pseudo_label - mean_std[2]) > abs(mean_std[0] - mean_std[2]):
-            count[1] += 1
-        else:
-            count[2] += 1
-        total_msle += (np.log(pseudo_label+1) - np.log(mean_std[2]+1)) ** 2
-        total_count += 1
-
-    print(count)
-
-    return total_msle, total_count
-
-
-def check_loop():
-    block_size_list = [100]
-    for block_size in block_size_list:
-        den_map, est_map, side_info = gen_den_map(block_size)
-        print('-'*20, block_size, '-'*20)
-        total_msle, total_count = check_pseudo_label(den_map, est_map, side_info)
-        print(total_count)
-        print(np.sqrt(total_msle / total_count))
-
-
-def col_pseudo_label():
+    # Generate pseudo label dictionary
     pseudo_label_dict = {}
-
-    block_size = 100
-    den_map, est_map, side_info = gen_den_map(block_size)
-
-    with open('../data/test_var_std.json', 'r') as fp:
-        json_data = json.load(fp)
-
-    mean_std_list = {}
-    for key in json_data.keys():
-        data = json_data[key]
-        if data[0] >= THRESHOLD:
-            mean_std_list[key] = [data[1], data[0] * QFUNC[1] + QFUNC[0], key, data[0], data[2]]
-        else:
-            pseudo_label_dict[key] = {
-                'pseudo_label': data[1],
-                'variance': data[0],
+    for data in pred_data:
+        if data[2] <= THRESHOLD:
+            pseudo_label_dict[int(data[3])] = {
+                'pseudo_label': data[0],
+                'variance': data[2],
                 'lmd': 1/den_map.shape[0],
                 'gmd': 1/den_map.shape[0],
-                'label': data[2]
+                'label': data[4]
             }
+        else:
+            den_list = cal_block_indices(data[0], data[1], side_info)
+            pseudo_list = []  # To be used for interpolation
+            for d in den_list:
+                pseudo_list.append((est_map[d[0]], den_map[d[0]] * d[1], den_map[d[0]]))
+            pseudo_array = np.array(pseudo_list)
+            pseudo_label = np.average(pseudo_array[:, 0], weights=pseudo_array[:, 1]).item()
+            lmd = np.mean(pseudo_array[:, 2]).item()
+            pseudo_label_dict[int(data[3])] = {
+                'pseudo_label': pseudo_label,
+                'variance': data[2],
+                'lmd': lmd,
+                'gmd': 1 / den_map.shape[0],
+                'label': data[4]
+            }
+    return pseudo_label_dict
 
-    # Generate pseudo label
-    for key in mean_std_list.keys():
-        mean_std = mean_std_list[key]
 
-        den_list = cal_den(mean_std[0], mean_std[1], side_info)
-        pseudo_list = []  # To be used for interpolation
-        for d in den_list:
-            pseudo_list.append((est_map[d[0]], den_map[d[0]] * d[1], den_map[d[0]]))
-        pseudo_array = np.array(pseudo_list)
-        pseudo_label = np.average(pseudo_array[:, 0], weights=pseudo_array[:, 1]).item()
-        lmd = np.mean(pseudo_array[:, 2]).item()
-        gmd = 1/den_map.shape[0]
-        pseudo_label_dict[key] = {
-            'pseudo_label': pseudo_label,
-            'variance': mean_std[3],
-            'lmd': lmd,
-            'gmd': gmd,
-            'label': mean_std[4]
-        }
-
-    with open('../data/poor_pseudo.json', 'w') as fp:
-        json.dump(pseudo_label_dict, fp)
+def check_pseudo_label(pseudo_label_dict):
+    total_mse = 0
+    total_count = 0
+    for k in pseudo_label_dict.keys():
+        data = pseudo_label_dict[k]
+        total_mse += (np.log(data['pseudo_label']+1) - np.log(data['label']+1)) ** 2
+        total_count += 1
+    mse_b = 0.5119
+    mse_a = np.sqrt(total_mse/total_count)
+    print('-' * 60)
+    print('Duration RMSLE before adaptation: %.4f' % mse_b)
+    print('Duration RMSLE after adaptation: %.4f' % mse_a)
+    print('RMSLE reduction rate: %.2f%%' % ((mse_b-mse_a)/mse_b*100))
+    print('-' * 60)
 
 
 if __name__ == "__main__":
-    col_pseudo_label()
-    # check_loop()
+    model_path = '../model/pretrained_model.pt'
+    block_size = 100
+    pseudo_label_dict = gen_pseudo_label(model_path, Q_FUNC, block_size, device='cuda:0')
+    save_path = '../data/pseudo_label_train.json'
+    with open(save_path, 'w') as fp:
+        json.dump(pseudo_label_dict, fp)
+    check_pseudo_label(pseudo_label_dict)
