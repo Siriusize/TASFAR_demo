@@ -92,10 +92,10 @@ We also demonstrate TASFAR by two additional tasks:
 and 
 [New York City taxi trip duration prediction](https://www.kaggle.com/c/nyc-taxi-trip-duration).
 
-We split the source and target data based on (house or take-off) locations. For the California housing dataset, the source data are coastal area and the target data are non-coastal area. 
+We split the source and target data based on (house or take-off) locations. For the California housing dataset, the source data are from coastal area and the target data are from non-coastal area. 
 For the NYC taxi trip duration dataset, the target area is Manhattan district and the source is non-Manhattan area. 
 
-The demo code for the both tasks is included in this repo. The sample output of the housing price prediction is as follows: 
+The demo code for the both tasks is included in this repo. For simpleicity, we show sample output of the housing price prediction as follows: 
 
 ### Testing
 ```
