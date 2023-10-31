@@ -102,7 +102,7 @@ The demo code for the both tasks is included in this repo. The sample output of 
 cd ./CA_house/source/
 python test.py 
 ```
-Sample output:
+Output:
 ```
 ------------------------------------------------------------
 Price MSE before adaptation: 0.2421
@@ -116,10 +116,10 @@ MSE reduction rate: 28.36%
 cd ./CA_house/source/
 python gen_pseudo_label.py 
 ```
-Sample output:
+Output:
 ```
 ------------------------------------------------------------
-Pseudo-label accuracy (MSE): 0.2055
+Pseudo-label error (MSE): 0.2055
 ------------------------------------------------------------
 ```
 
@@ -129,7 +129,7 @@ cd ./CA_house/source/
 # If you want to test the generated pseudo labels in Pseudo-label testing, you can modify the variable 'pseudo_label_path' in main function
 python train.py   
 ```
-Sample output:
+Output:
 ```
 ------------------------------------------------------------
 Price MSE before adaptation: 0.2421
