@@ -87,8 +87,9 @@ Trajectory visualization has been saved to '../figure/user1'
 ```
 
 ## Two additional tasks
-We also demonstrate TASFAR by two additional tasks. One is to predict the housing price with the California housing dataset, the other one is to predict the taxi-trip duration 
-with the NYC taxi trip duration dataset.
+We also demonstrate TASFAR by two additional tasks:
+California housing price prediction: https://inria.github.io/scikit-learn-mooc/python_scripts/datasets_california_housing.html;
+New York City taxi trip duration prediction: https://www.kaggle.com/c/nyc-taxi-trip-duration.
 
 We split the data based on geographical locations. For the California housing dataset, the source data are in the Golden Coast of California while the target data are not.
 For the NYC taxi trip duration dataset, the pick-up locations of source data are in Manhattan while the ones of target data are not. 
