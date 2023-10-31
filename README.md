@@ -124,9 +124,9 @@ Pseudo-label error (MSE): 0.2055
 ```
 
 ### Training
+If you want to test the generated pseudo labels in Pseudo-label testing, you can modify the variable 'pseudo_label_path' in main function
 ```
 cd ./CA_house/source/
-# If you want to test the generated pseudo labels in Pseudo-label testing, you can modify the variable 'pseudo_label_path' in main function
 python train.py   
 ```
 Output:
