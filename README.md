@@ -86,7 +86,7 @@ Trajectory visualization has been saved to '../figure/user1'
 ------------------------------------------------------------------
 ```
 
-## Two additional tasks
+## Two prediction tasks
 We also demonstrate TASFAR by two additional tasks:
 [California housing price prediction](https://inria.github.io/scikit-learn-mooc/python_scripts/datasets_california_housing.html)
 and 
