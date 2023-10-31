@@ -95,7 +95,7 @@ and
 We split the source and target data based on (house or take-off) locations. For the California housing dataset, the source data are from coastal area and the target data are from non-coastal area. 
 For the NYC taxi trip duration dataset, the target area is Manhattan district and the source is non-Manhattan area. 
 
-The demo code for the both tasks is included in this repo. For simpleicity, we show sample output of the housing price prediction as follows: 
+The demo code for the both tasks is included in this repo. For simplicity, we show sample output of the housing price prediction as follows: 
 
 ### Testing
 ```
