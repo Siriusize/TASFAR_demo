@@ -97,20 +97,6 @@ For the NYC taxi trip duration dataset, the target area is Manhattan district an
 
 The demo code for the both tasks is included in this repo. The sample output of the housing price prediction is as follows: 
 
-### Pseudo-label testing
-```
-cd ./CA_house/source/
-python gen_pseudo_label.py 
-```
-Sample output:
-```
-------------------------------------------------------------
-Price MSE before adaptation: 0.2421
-Price MSE after adaptation: 0.2055
-MSE reduction rate: 15.11%
-------------------------------------------------------------
-```
-
 ### Testing
 ```
 cd ./CA_house/source/
@@ -122,6 +108,18 @@ Sample output:
 Price MSE before adaptation: 0.2421
 Price MSE after adaptation: 0.1734
 MSE reduction rate: 28.36%
+------------------------------------------------------------
+```
+
+### Pseudo-label testing
+```
+cd ./CA_house/source/
+python gen_pseudo_label.py 
+```
+Sample output:
+```
+------------------------------------------------------------
+Pseudo-label accuracy (MSE): 0.2055
 ------------------------------------------------------------
 ```
 
