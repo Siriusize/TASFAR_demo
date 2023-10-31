@@ -15,4 +15,3 @@ def split_fun(longitude, latitude):
         else:
             domain_index = DOMAIN_INDEX_DICT['poor']
     return domain_index
-
